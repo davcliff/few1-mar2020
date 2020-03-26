@@ -14,3 +14,8 @@ describe('writing a basic spec', () => {
         expect(myName.length).toBe(4);
     });
 });
+describe('using the snippet', () => {
+    it('pretty cool', () => {
+        
+    });
+});
