@@ -1,6 +1,6 @@
 
- import { add, formatName } from './utils';
- describe('declaring variables in typescript', () => {
+import { add, formatName } from './utils';
+describe('declaring variables in typescript', () => {
     it('constant might not mean what you think it means', () => {
         // const means the variable cannot be reassigned to.
         const PI = 3.1415927;
@@ -47,7 +47,7 @@
     });
 });
 
- describe('literals', () => {
+describe('literals', () => {
     describe('string literals', () => {
         it('has them', () => {
             const message = 'She told me "You look nice today!"';
@@ -83,7 +83,7 @@
     });
 });
 
- describe('array literals and tuple types', () => {
+describe('array literals and tuple types', () => {
     it('two ways to declare an array', () => {
         const numbers: (number | string)[] = [1, 2, 3, 4];
         numbers[0] = 'Tacos';
@@ -144,3 +144,106 @@
     });
 });
 
+describe('object literals and interfaces', () => {
+    it('anonymous objects are defined by an interface', () => {
+        const thor = {
+            title: 'Thor: Ragnorak',
+            director: 'Taika Waititi',
+            yearReleased: 2017
+        };
+        // thor.yearReleased = 2018;
+        const updatedThor = { ...thor, yearReleased: 2018 };
+        expect(updatedThor.title).toBe('Thor: Ragnorak');
+        expect(updatedThor.yearReleased).toBe(2018);
+        expect(thor.yearReleased).toBe(2017);
+    });
+    it('extensible objects', () => {
+        interface Book {
+            title: string;
+            author: string;
+            pages: number;
+            publisher?: string;
+            year: number | null;
+        }
+        const book: Book = {
+            title: 'Walden',
+            author: 'Thoreau',
+            pages: 219,
+            year: null
+        };
+        book.publisher = '';
+        // book.page = 300;
+        function doBookStuff(someBook: Book) {
+            const hasPublisher = !!someBook.publisher; // this will return if publisher is "truthy"
+            if (!hasPublisher) {
+                // don't count ont hat being there..
+            }
+        }
+    });
+    it('truth table', () => {
+        expect(undefined).toBeFalsy();
+        expect(null).toBeFalsy();
+        expect(0).toBeFalsy();
+        expect('').toBeFalsy();
+        expect(1).toBeTruthy();
+        expect(-1).toBeTruthy();
+        expect(NaN).toBeFalsy();
+        expect('penguin').toBeTruthy();
+    });
+});
+
+describe('structural typing (aka "duck typing")', () => {
+    it('an example', () => {
+
+        interface IHaveAMessage { message: string; }
+        function logItOut(thingy: IHaveAMessage) {
+            console.log(`At ${new Date().toISOString()}: ${thingy.message}`);
+        }
+        // logItOut();
+        // logItOut('tacos');
+        logItOut({ message: 'Hello' });
+        const phoneCall = {
+            from: 'Mom',
+            line: 'Home Phone',
+            message: 'Call your mom'
+        };
+
+        logItOut(phoneCall);
+    });
+});
+
+describe('enums and string unions', () => {
+    it('assigning seats', () => {
+        type SeatType = 'aisle' | 'window' | 'middle';
+
+        let mySeat: SeatType;
+
+        mySeat = (() => 'window' as SeatType)();
+        let price = 0;
+
+        switch (mySeat) {
+            case 'aisle': {
+                price = 100;
+                return;
+            }
+            case 'window': {
+                price = 175;
+                return;
+            }
+            case 'middle': {
+                price = 75;
+                return;
+            }
+        }
+
+        expect(price).toBe(125);
+
+        type FileType = 'xml' | 'json' | 'jsonp' | 'text';
+
+        const theFile: FileType = 'jsonp';
+
+        enum AccountType { Standard, Gold, Platinum }
+
+        const myAccount: AccountType = AccountType.Gold;
+    });
+});
