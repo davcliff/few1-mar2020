@@ -60,4 +60,99 @@ describe('array method', () => {
             expect(doubled).toEqual([2, 4, 6, 8, 10, 12, 14, 16, 18]);
         });
     });
+    describe('scalar array methods', () => {
+        describe('testing membership', () => {
+            it('can see if every element of an array matches a criteria', () => {
+                const allEven = numbers.every(isEven);
+                expect(allEven).toBe(false);
+            });
+            it('can see if every element of an array matches a criteria', () => {
+                const anyEven = numbers.some(isEven);
+                expect(anyEven).toBe(true);
+            });
+        });
+        describe('using reduce', () => {
+            it('boiling down a list of things to a single value', () => {
+                const total = numbers.reduce((s, n) => s + n);
+                expect(total).toBe(45);
+                const total2 = numbers.reduce((s, n) => s + n, 100); // 100 here is the "seed" or initial state
+                expect(total2).toBe(145);
+            });
+        });
+    });
+    describe('practice', () => {
+        interface CartItem {
+            name: string;
+            qty: number;
+            price: number;
+        }
+
+        const cart: CartItem[] = [
+            { name: 'Eggs', qty: 1, price: 2.99 },
+            { name: 'Bread', qty: 3, price: 3.57 },
+            { name: 'Shampoo', qty: 2, price: 7.25 }
+        ];
+
+        interface ShippingInfo {
+            totalQty: number;
+            totalPrice: number;
+        }
+        it('Can you calculate the shipping info for the cart?', () => {
+            const originalShippingInfo: ShippingInfo = {
+                totalQty: 0,
+                totalPrice: 0
+            };
+            const shippingInfo: ShippingInfo = cart.reduce((previous: ShippingInfo, nextCartItem: CartItem) => ({
+                    totalQty: previous.totalQty + nextCartItem.qty,
+                    totalPrice: previous.totalPrice + (nextCartItem.qty * nextCartItem.price)
+            }), originalShippingInfo);
+
+            expect(shippingInfo.totalPrice).toBe((1 * 2.99) + (3 * 3.57) + (2 * 7.25));
+            expect(shippingInfo.totalQty).toBe(6);
+        });
+    });
+    describe('another practice', () => {
+        interface BowlingGame {
+            playerName: string;
+            score: number;
+        }
+        const scores: BowlingGame[] = [
+            { playerName: 'Jeff', score: 127 },
+            { playerName: 'Henry', score: 227 },
+            { playerName: 'Violet', score: 118 }
+        ];
+        interface Result {
+            highScore: BowlingGame;
+            lowScore: BowlingGame;
+        }
+
+        const defScore: BowlingGame = {
+            playerName: 'N/A',
+            score: -1
+        }
+
+        const initialState: Result = {
+            highScore: defScore,
+            lowScore: defScore
+        };
+
+        it('practice', () => {
+            // figure out who has the highest score, who has the lowest score, and what the highest and lowest score are.
+            // there are no ties. We don't believe in that, don't worry about.
+            // 1. Design an interface that is what you want the result to be.
+            // 2. Set the initial state as above.
+            // 3. Profit!
+            const gameResult: Result = scores.reduce((state: Result, next: BowlingGame) => {
+                return {
+                    highScore: next.score > state.highScore.score ? next : state.highScore,
+                    lowScore: (next.score < state.lowScore.score || state.lowScore.score < 0) ? next : state.lowScore
+                };
+            }, initialState);
+
+            expect(gameResult.highScore.playerName).toBe('Henry');
+            expect(gameResult.highScore.score).toBe(227);
+            expect(gameResult.lowScore.playerName).toBe('Violet');
+            expect(gameResult.lowScore.score).toBe(118);
+        });
+    });
 });
